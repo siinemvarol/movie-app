@@ -1,24 +1,46 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import { getFilms } from './api.jsx';
+import Cards from './Cards';
 
 function App() {
+
+  const categories = ["All", "Action", "Drama", "Comedy"];
+  const [movies, setMovies] = useState([]);
+  const [category, setCategory] = useState("All");
+
+  const handleCategoryChange = (category) => {
+    setCategory(category);
+  };
+
+  const filteredMovies = category === "All" ? movies : movies.filter((movie) => movie.category === category);
+
+  useEffect(() => {
+    getFilms().then((response) => setMovies(response));
+
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="movie-app"> 
+        <h1>Movies</h1>
+        <div className='categories'>
+        {
+          categories.map((category, index) => (
+            <button key={index} onClick={() => handleCategoryChange(category)}>{category}</button>
+          )
+          )
+        }
+        </div>      
+        <div className='movies'>
+          {
+            filteredMovies.map((movie) => (
+            <Cards key={movie.id} movie={movie}/>            
+            ))
+          }
+        </div>
+      </div>
+    </>
   );
 }
 
